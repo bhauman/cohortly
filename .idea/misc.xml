@@ -7,6 +7,9 @@
     <option name="CHECKOUT_INCLUDE_TAGS" value="false" />
     <option name="UPDATE_CHANGES_POLICY" value="STASH" />
   </component>
+  <component name="ProjectResources">
+    <default-html-doctype>http://www.w3.org/1999/xhtml</default-html-doctype>
+  </component>
   <component name="ProjectRootManager" version="2" project-jdk-name="RVM: ruby-1.9.2-p136 [cohortly]" project-jdk-type="RUBY_SDK" />
 </project>
 

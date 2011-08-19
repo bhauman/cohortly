@@ -55,6 +55,19 @@
     <orderEntry type="library" scope="PROVIDED" name="[gem] railties (v3.0.9, /Users/bhauman/.rvm/gems/ruby-1.9.2-p136@cohortly/gems/railties-3.0.9)" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="[gem] mail (v2.2.19, /Users/bhauman/.rvm/gems/ruby-1.9.2-p136@cohortly/gems/mail-2.2.19)" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="[gem] actionpack (v3.0.9, /Users/bhauman/.rvm/gems/ruby-1.9.2-p136@cohortly/gems/actionpack-3.0.9)" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="[gem] capybara (v1.0.1, /Users/bhauman/.rvm/gems/ruby-1.9.2-p136@cohortly/gems/capybara-1.0.1)" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="[gem] bson_ext (vVERSION, /Users/bhauman/.rvm/gems/ruby-1.9.2-p136@cohortly/gems/bson_ext-1.3.1)" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="[gem] mongo_mapper (v0.9.1, /Users/bhauman/.rvm/gems/ruby-1.9.2-p136@cohortly/gems/mongo_mapper-0.9.1)" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="[gem] mongo (v1.3.1, /Users/bhauman/.rvm/gems/ruby-1.9.2-p136@cohortly/gems/mongo-1.3.1)" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="[gem] childprocess (v0.2.1, /Users/bhauman/.rvm/gems/ruby-1.9.2-p136@cohortly/gems/childprocess-0.2.1)" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="[gem] selenium-webdriver (v2.4.0, /Users/bhauman/.rvm/gems/ruby-1.9.2-p136@cohortly/gems/selenium-webdriver-2.4.0)" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="[gem] ffi (v1.0.9, /Users/bhauman/.rvm/gems/ruby-1.9.2-p136@cohortly/gems/ffi-1.0.9)" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="[gem] bson (v1.3.1, /Users/bhauman/.rvm/gems/ruby-1.9.2-p136@cohortly/gems/bson-1.3.1)" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="[gem] plucky (v0.3.8, /Users/bhauman/.rvm/gems/ruby-1.9.2-p136@cohortly/gems/plucky-0.3.8)" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="[gem] nokogiri (v1.5.0, /Users/bhauman/.rvm/gems/ruby-1.9.2-p136@cohortly/gems/nokogiri-1.5.0)" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="[gem] rubyzip (v0.9.4, /Users/bhauman/.rvm/gems/ruby-1.9.2-p136@cohortly/gems/rubyzip-0.9.4)" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="[gem] xpath (v0.1.4, /Users/bhauman/.rvm/gems/ruby-1.9.2-p136@cohortly/gems/xpath-0.1.4)" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="[gem] json_pure (v1.5.3, /Users/bhauman/.rvm/gems/ruby-1.9.2-p136@cohortly/gems/json_pure-1.5.3)" level="application" />
   </component>
 </module>
 

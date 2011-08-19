@@ -2,11 +2,13 @@
 <html>
 <head>
   <title>Dummy</title>
-  <%= stylesheet_link_tag :all %>
-  <%= javascript_include_tag :defaults %>
   <%= csrf_meta_tag %>
 </head>
 <body>
+<ul>
+  <li><%= link_to "My Stuff", '/stuff/my_stuff' %></li>
+  <li><%= link_to "Your Stuff", '/stuff/your_stuff' %></li>
+</ul>
 
 <%= yield %>
 

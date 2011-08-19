@@ -1,4 +1,8 @@
 class StuffController < ApplicationController
+
+  def index
+  end
+
   def my_stuff
   end
 
