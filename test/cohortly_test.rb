@@ -2,11 +2,66 @@ require 'test_helper'
 
 class CohortlyTest < ActiveSupport::TestCase
 
+  test "tag config" do
+    Cohortly::TagConfig.draw_tags do
+
+      tag :hello do
+        controller :hi_there do
+          actions :index, :create, :update
+        end
+      end
+
+      tag :goodbye do
+        controller :see_ya do
+          actions :create, :update
+        end
+        controller :hi_there do
+          actions :update
+        end
+      end
+
+      tag :only_good do
+        controllers :stuff, :goodies
+      end
+
+      tag :only_bad do
+        controllers :stuff, :goodies
+      end
+
+      tags :heh, :whoa do
+        controllers :hellas
+      end
+    end
+
+    assert_equal Cohortly::TagConfig.tags_for(:hi_there, :index), ['hello']
+    assert_equal Cohortly::TagConfig.tags_for(:see_ya, :index), []
+    assert_equal Cohortly::TagConfig.tags_for(:see_ya, :create), ['goodbye']
+    assert_equal Cohortly::TagConfig.tags_for(:hi_there, :what), []
+    assert_equal Cohortly::TagConfig.tags_for(:hi_there, :update), ['hello', 'goodbye']
+    assert_equal Cohortly::TagConfig.tags_for(:stuff, :a), ['only_good', 'only_bad']
+    assert_equal Cohortly::TagConfig.tags_for(:stuff, :b), ['only_good', 'only_bad']
+    assert_equal Cohortly::TagConfig.tags_for(:goodies, :a), ['only_good', 'only_bad']
+    assert_equal Cohortly::TagConfig.tags_for(:goodies, :b), ['only_good', 'only_bad']
+    assert_equal Cohortly::TagConfig.tags_for(:hellas, :b), ['heh', 'whoa']
+  end
+
   test "cohortly record event" do
+    Cohortly::TagConfig.draw_tags do
+      tag :over13 do
+        controller :session do
+          actions :login
+        end
+      end
+      tag :login do
+        controller :session do
+          actions :login
+        end
+      end
+    end
+
     payload = { :user_start_date => Time.now - 1.month,
                 :user_id         => 5,
                 :user_email => "jordon@example.com",
-                :tags => ['login', 'over13'],
                 :controller => "session",
                 :action => "login"
                 }
@@ -32,11 +87,25 @@ class CohortlyTest < ActiveSupport::TestCase
 
     report = Cohortly::Report.new('cohort_report')
     assert_equal report.month_to_time('2011-08'), Time.utc(2011, 8)
-    assert_equal report.start_month, (Time.now - 15.months).year.to_s + '-0' + (Time.now - 15.months).month.to_s
+    assert_equal report.time_to_month(Time.utc(2011,8)), '2011-08'
+    assert_equal report.start_month, (Time.now - 15.months).year.to_s + '-0' + (Time.now - 14.months).month.to_s
     assert_equal report.month_cohorts.length, 15
-    p report.data.collect {|x| x['_id']}
 #    assert_equal report.report_line(report.month_cohorts[2]), []
-    assert_equal report.report_totals, []
+    assert_equal report.report_totals, [[14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
+                                        [13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
+                                        [12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
+                                        [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
+                                        [10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
+                                        [9, 8, 7, 6, 5, 4, 3, 2, 1],
+                                        [8, 7, 6, 5, 4, 3, 2, 1],
+                                        [7, 6, 5, 4, 3, 2, 1],
+                                        [6, 5, 4, 3, 2, 1],
+                                        [5, 4, 3, 2, 1],
+                                        [4, 3, 2, 1],
+                                        [3, 2, 1],
+                                        [2, 1],
+                                        [1],
+                                        []]
   end
 
   def setup_data_to_report_on

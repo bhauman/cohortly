@@ -11,7 +11,9 @@ module Cohortly
     timestamps!
 
     def self.store!(args)
-      create(args[4])
+      data = args[4]
+      data[:tags] = Cohortly::TagConfig.tags_for(data[:controller], data[:action])
+      create(data)
     end
 
     def self.cohort_chart_for_tag
@@ -23,7 +25,7 @@ module Cohortly
         function() {
           function get_month_date(date) {
             var year = date.getYear() + 1900;
-            var month = date.getMonth();
+            var month = date.getMonth() + 1;
             if(month < 10) { month = '0' + month }
             return year + '-' + month;
           }

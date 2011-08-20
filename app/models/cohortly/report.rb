@@ -33,7 +33,7 @@ module Cohortly
       end_time = month_to_time(end_month)
       cur_time = start_time
       res = []
-      while(cur_time < end_time) do
+      while(cur_time <= end_time) do
         res << time_to_month(cur_time)
         cur_time += 1.month
       end
