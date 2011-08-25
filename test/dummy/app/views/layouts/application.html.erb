@@ -5,9 +5,12 @@
   <%= csrf_meta_tag %>
 </head>
 <body>
+
 <ul>
   <li><%= link_to "My Stuff", '/stuff/my_stuff' %></li>
   <li><%= link_to "Your Stuff", '/stuff/your_stuff' %></li>
+  <li><%= link_to "Metrics", cohortly_metrics_path %></li>
+  <li><%= link_to "Cohort Reports", cohortly_reports_path %></li>
 </ul>
 
 <%= yield %>

@@ -7,10 +7,9 @@ class ApplicationController < ActionController::Base
   protected
 
   def record_event
+    Rails.logger.info(Cohortly::TagConfig.instance)
     payload = { :user_start_date => Time.now - 1.month,
                 :user_id         => 5,
-                :user_email => "jordon@example.com",
-                :tags => [params[:action] + "_tag", params[:controller] + '_tag'],
                 :controller => params[:controller],
                 :action => params[:action]
                 }

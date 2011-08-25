@@ -1,38 +1,11 @@
 require 'test_helper'
 
+
+
+
 class CohortlyTest < ActiveSupport::TestCase
 
   test "tag config" do
-    Cohortly::TagConfig.draw_tags do
-
-      tag :hello do
-        controller :hi_there do
-          actions :index, :create, :update
-        end
-      end
-
-      tag :goodbye do
-        controller :see_ya do
-          actions :create, :update
-        end
-        controller :hi_there do
-          actions :update
-        end
-      end
-
-      tag :only_good do
-        controllers :stuff, :goodies
-      end
-
-      tag :only_bad do
-        controllers :stuff, :goodies
-      end
-
-      tags :heh, :whoa do
-        controllers :hellas
-      end
-    end
-
     assert_equal Cohortly::TagConfig.tags_for(:hi_there, :index), ['hello']
     assert_equal Cohortly::TagConfig.tags_for(:see_ya, :index), []
     assert_equal Cohortly::TagConfig.tags_for(:see_ya, :create), ['goodbye']
@@ -43,21 +16,13 @@ class CohortlyTest < ActiveSupport::TestCase
     assert_equal Cohortly::TagConfig.tags_for(:goodies, :a), ['only_good', 'only_bad']
     assert_equal Cohortly::TagConfig.tags_for(:goodies, :b), ['only_good', 'only_bad']
     assert_equal Cohortly::TagConfig.tags_for(:hellas, :b), ['heh', 'whoa']
+    assert_equal Cohortly::TagConfig.tags_for(:hellas, :b), ['heh', 'whoa']
+
+    assert_equal Cohortly::TagConfig.all_tags, ['hello', 'goodbye', 'only_good', 'only_bad', 'heh', 'whoa', 'over13', 'login']
   end
 
   test "cohortly record event" do
-    Cohortly::TagConfig.draw_tags do
-      tag :over13 do
-        controller :session do
-          actions :login
-        end
-      end
-      tag :login do
-        controller :session do
-          actions :login
-        end
-      end
-    end
+
 
     payload = { :user_start_date => Time.now - 1.month,
                 :user_id         => 5,
@@ -111,7 +76,6 @@ class CohortlyTest < ActiveSupport::TestCase
   def setup_data_to_report_on
     payload = { :user_start_date => Time.now - 1.month,
                 :user_id         => 5,
-                :tags => ['login', 'over13'],
                 :controller => "session",
                 :action => "login"
                 }

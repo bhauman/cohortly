@@ -10,6 +10,8 @@ module Cohortly
     key :action, String
     timestamps!
 
+    ensure_index :tags
+
     def self.store!(args)
       data = args[4]
       data[:tags] = Cohortly::TagConfig.tags_for(data[:controller], data[:action])
@@ -17,7 +19,7 @@ module Cohortly
     end
 
     def self.cohort_chart_for_tag
-      self.collection.map_reduce(self.month_map, self.reduce,  {:out => "cohort_report", :raw => true} )
+      self.collection.map_reduce(self.month_map, self.reduce,  {:out => "cohort_report", :raw => true, :query => {}} )
     end
 
     def self.month_map

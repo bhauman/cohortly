@@ -1,5 +1,6 @@
 require 'mongo_mapper'
 require "cohortly/engine"
+require "cohortly/tag_config"
 
 MongoMapper.database = "cohortly-#{Rails.env}"
 
