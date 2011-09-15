@@ -68,6 +68,14 @@
     <orderEntry type="library" scope="PROVIDED" name="[gem] rubyzip (v0.9.4, /Users/bhauman/.rvm/gems/ruby-1.9.2-p136@cohortly/gems/rubyzip-0.9.4)" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="[gem] xpath (v0.1.4, /Users/bhauman/.rvm/gems/ruby-1.9.2-p136@cohortly/gems/xpath-0.1.4)" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="[gem] json_pure (v1.5.3, /Users/bhauman/.rvm/gems/ruby-1.9.2-p136@cohortly/gems/json_pure-1.5.3)" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="[gem] rails (v3.0.4, /Users/bhauman/.rvm/gems/ruby-1.9.2-p136@cohortly/gems/rails-3.0.4)" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="[gem] actionpack (v3.0.4, /Users/bhauman/.rvm/gems/ruby-1.9.2-p136@cohortly/gems/actionpack-3.0.4)" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="[gem] activeresource (v3.0.4, /Users/bhauman/.rvm/gems/ruby-1.9.2-p136@cohortly/gems/activeresource-3.0.4)" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="[gem] railties (v3.0.4, /Users/bhauman/.rvm/gems/ruby-1.9.2-p136@cohortly/gems/railties-3.0.4)" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="[gem] activemodel (v3.0.4, /Users/bhauman/.rvm/gems/ruby-1.9.2-p136@cohortly/gems/activemodel-3.0.4)" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="[gem] activesupport (v3.0.4, /Users/bhauman/.rvm/gems/ruby-1.9.2-p136@cohortly/gems/activesupport-3.0.4)" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="[gem] activerecord (v3.0.4, /Users/bhauman/.rvm/gems/ruby-1.9.2-p136@cohortly/gems/activerecord-3.0.4)" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="[gem] actionmailer (v3.0.4, /Users/bhauman/.rvm/gems/ruby-1.9.2-p136@cohortly/gems/actionmailer-3.0.4)" level="application" />
   </component>
 </module>
 
