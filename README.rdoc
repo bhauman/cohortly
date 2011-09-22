@@ -1,3 +1,5 @@
 = Cohortly
 
+The beginings of an engine to do basic cohort analysis on a feature basis.
+
 This project rocks and uses MIT-LICENSE.
