@@ -4,7 +4,7 @@ class Cohortly::ReportsController < ApplicationController
   end
 
   def show
-#    Cohortly::Metric.cohort_chart_for_tag
-    @report = Cohortly::Report.new('cohort_report')
+    @report_name = Cohortly::Metric.cohort_chart_for_tag(params[:id])
+    @report = Cohortly::Report.new(@report_name)
   end
 end

@@ -18,8 +18,13 @@ module Cohortly
       create(data)
     end
 
-    def self.cohort_chart_for_tag
-      self.collection.map_reduce(self.month_map, self.reduce,  {:out => "cohort_report", :raw => true, :query => {}} )
+    def self.cohort_chart_for_tag(tag = nil)
+      report_name = "cohort_report"
+      report_name += "_#{tag}" if tag
+      query = {}
+      query = { :tags => tag } if tag
+      self.collection.map_reduce(self.month_map, self.reduce,  {:out => report_name, :raw => true, :query => query} )
+      report_name  
     end
 
     def self.month_map
