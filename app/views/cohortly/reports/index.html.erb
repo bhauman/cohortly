@@ -1,6 +1,7 @@
 <h1>TAGS</h1>
 <ul>
+  <li><%= link_to "all", cohortly_report_all_path %></li>
   <% @tags.each do |tag| %>
-    <%= link_to tag, cohortly_report_path(tag) %>
+    <li><%= link_to tag, cohortly_report_path(tag) %></li>
   <% end %>
 </ul>
