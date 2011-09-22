@@ -4,11 +4,10 @@ module Cohortly
     attr_accessor :collection
     def initialize(collection)
       self.collection = collection
-
     end
 
     def data
-      @data ||= (MongoMapper.database['cohort_report'].find().collect {|x| x}).sort_by {|x| x['_id'] }
+      @data ||= (MongoMapper.database[self.collection].find().collect {|x| x}).sort_by {|x| x['_id'] }
     end
 
     def start_month
@@ -26,6 +25,12 @@ module Cohortly
     def month_to_time(str_month)
       year, month = str_month.split('-')
       Time.utc(year.to_i, month.to_i)
+    end
+
+    def user_count_in_cohort(str_month)
+      Cohortly::Metric.collection.distinct(:user_id,
+                                           { :user_start_date => { :$gt => month_to_time(str_month),
+                                                                   :$lt => (month_to_time(str_month) + 1.month)}}).length
     end
 
     def month_cohorts
@@ -57,6 +62,12 @@ module Cohortly
       end
     end
 
+    def percent_line(cohort_key)
+      line = report_line(cohort_key)
+      base = user_count_in_cohort(cohort_key)
+      line.collect { |x| (x/base.to_f * 100).round }.unshift base
+    end
+    
     def report_totals
       month_cohorts.collect do |cohort_key|
         report_line(cohort_key)

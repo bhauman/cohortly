@@ -6,7 +6,8 @@ class NavigationTest < ActiveSupport::IntegrationCase
   end
 
   test "reporting navigation" do
-    visit reports_path
+    visit cohortly_reports_path
+    
     
   end
 

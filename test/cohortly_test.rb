@@ -55,6 +55,7 @@ class CohortlyTest < ActiveSupport::TestCase
     assert_equal report.time_to_month(Time.utc(2011,8)), '2011-08'
     assert_equal report.start_month, (Time.now - 15.months).year.to_s + '-0' + (Time.now - 14.months).month.to_s
     assert_equal report.month_cohorts.length, 15
+
 #    assert_equal report.report_line(report.month_cohorts[2]), []
     assert_equal report.report_totals, [[14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
                                         [13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
@@ -71,6 +72,28 @@ class CohortlyTest < ActiveSupport::TestCase
                                         [2, 1],
                                         [1],
                                         []]
+  end
+
+  test "counting uniq users in cohort" do
+    setup_data_to_report_on
+    Cohortly::Metric.cohort_chart_for_tag
+    report = Cohortly::Report.new('cohort_report')
+    start_month = report.start_month
+    start_month_time = report.month_to_time(report.start_month)
+    next_month  = report.time_to_month(start_month_time + 1.month)
+    
+    assert_equal report.user_count_in_cohort(start_month), 14
+    assert_equal report.user_count_in_cohort(next_month), 13    
+  end
+
+  test "getting a line of percentages" do
+    setup_data_to_report_on
+    Cohortly::Metric.cohort_chart_for_tag
+    report = Cohortly::Report.new('cohort_report')
+    line = report.percent_line(report.start_month)
+    cohort_count = report.user_count_in_cohort(report.start_month)
+    assert_equal line, [cohort_count, 100, 93, 86, 79, 71, 64, 57, 50, 43, 36, 29, 21, 14, 7]
+    
   end
 
   def setup_data_to_report_on
