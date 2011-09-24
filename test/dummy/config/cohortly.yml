@@ -1,0 +1,15 @@
+defaults: &defaults
+  host: localhost
+  port: 27017
+
+test:
+  <<: *defaults
+  database: cohortly-test
+
+development:
+  <<: *defaults
+  database: cohortly-development
+
+production:
+  <<: *defaults
+  database: cohortly-production

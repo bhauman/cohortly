@@ -1,4 +1,5 @@
 require 'mongo_mapper'
+require "cohortly/config"
 require "cohortly/engine"
 require "cohortly/tag_config"
 
