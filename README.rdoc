@@ -2,4 +2,60 @@
 
 The beginings of an engine to do basic cohort analysis on a feature basis.
 
+== Configuration
+
+=== Mongo database config
+
+Setup a cohortly.yml file in your config directory
+
+  production:
+    host: localhost
+    port: 27017
+    username: nyusername
+    password: mypassword
+    database: cohortly-production
+
+=== Application controller config
+
+Setup cohortly notifications by letting it know who your user is and his start date.  
+You also need to give cohortly the controller and action.
+
+  class ApplicationController < ActionController::Base
+    before_filter do
+      if current_user.logged_in?
+        ActiveSupport::Notifications.instrument("cohortly.event",  { 
+                :user_start_date => current_user.created_at,
+                :user_id         => current_user.id,
+                :controller => params[:controller],
+                :action => params[:action]
+               })
+      end
+    end
+  end
+
+===  Tag Config
+
+The tag config maps controllers and actions to tags that get added to the metrics that are recorded.
+
+In confg/initializers/cohortly.rb
+
+  Cohortly::TagConfig.draw_tags do
+    tag :login do
+      controller :session do
+        actions :create
+      end
+    end
+    tag :logout do
+      controller :sessions do
+        actions :destroy
+      end
+    end
+    tag :view_account do
+      controller :account do
+        actions :show
+      end
+    end
+  end
+
+
 This project rocks and uses MIT-LICENSE.
