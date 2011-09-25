@@ -12,11 +12,6 @@ module Cohortly
 
     ensure_index :tags
     
-    Cohortly::Config.config.tap do |cfg|
-      database = cfg.database
-      connection = cfg.connection      
-    end
-    
     def self.store!(args)
       data = args[4]
       if data[:controller] && !data[:controller]['cohortly']
