@@ -12,6 +12,6 @@ class ApplicationController < ActionController::Base
                 :controller => params[:controller],
                 :action => params[:action]
                 }
-    Activesupport::Notifications.instrument("cohortly.event", payload)
+    ActiveSupport::Notifications.instrument("cohortly.event", payload)
   end
 end
