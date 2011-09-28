@@ -2,8 +2,12 @@
 # project in your rails apps through git.
 Gem::Specification.new do |s|
   s.name = "cohortly"
-  s.summary = "Insert Cohortly summary."
-  s.description = "Insert Cohortly description."
+  s.summary = "Cohortly: the cohort analysis engine for Rails."
+  s.description = "Cohortly records user actions and with minimal configuration allows you to get decent cohort analysis of ser activity."
   s.files = Dir["{app,lib,config}/**/*"] + ["MIT-LICENSE", "Rakefile", "Gemfile", "README.rdoc"]
-  s.version = "0.0.1"
+  s.version = Cohortly::VERSION
+  s.platofrom = Gem::Platform::RUBY
+  s.authors = ["Bruce Hauman"]
+  s.email = ["bhauman@gmail.com"]
+  s.homepage = 'https://github.com/bhauman/cohortly'
 end

@@ -12,5 +12,4 @@ ActiveSupport::Notifications.subscribe "cohortly.event" do |*args|
 end
 
 module Cohortly
-
 end
