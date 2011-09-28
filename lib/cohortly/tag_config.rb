@@ -47,14 +47,18 @@ module Cohortly
     end
 
     def self.all_tags
-      instance._tags.collect {|x| x._name.to_s }
+      if instance._tags
+        instance._tags.collect {|x| x._name.to_s }
+      else
+        []
+      end
     end
 
     class Tag
       attr_accessor :_name, :_controllers
       def initialize(tag_name, &block)
         self._controllers ||= []
-        self._name = tag_name
+        self._name = tag_name.to_sym
         instance_eval(&block)
       end
       def controller(controller_name, &block)
@@ -69,12 +73,12 @@ module Cohortly
       attr_accessor :_name, :_acts
       def initialize(controller_name, &block)
         self._acts ||= []
-        self._name = controller_name
+        self._name = controller_name.to_sym
         self.instance_eval(&block)
       end
 
       def actions(*act_names)
-        self._acts = act_names
+        self._acts = act_names.collect &:to_sym
       end
     end
   end
