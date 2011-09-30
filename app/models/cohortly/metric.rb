@@ -16,6 +16,8 @@ module Cohortly
       data = args[4]
       if data[:controller] && !data[:controller]['cohortly']
         data[:tags] = Cohortly::TagConfig.tags_for(data[:controller], data[:action])
+        data[:user_email] = data[:email] if data[:email]
+        data[:tags] += data[:add_tags] if data[:add_tags]
         create(data)
       end
     end
