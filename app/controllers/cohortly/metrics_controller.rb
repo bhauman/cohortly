@@ -1,6 +1,6 @@
 class Cohortly::MetricsController < Cohortly::CohortlyController
   def index
-    @metric_search = Metric.new(params[:cohortly_metric])
+    @metric_search = Cohortly::Metric.new(params[:cohortly_metric])
     
     scope = Cohortly::Metric.limit(250).sort(:created_at.desc)
     if params[:tags]
