@@ -1,8 +1,6 @@
 module Cohortly
   class Config
-    include ActiveSupport::Configurable
-
-    
+    include ActiveSupport::Configurable    
     
   end
 end

@@ -34,6 +34,7 @@ module Cohortly
     end
 
     def month_cohorts
+      return [] unless data.first
       start_time = month_to_time(start_month)
       end_time = month_to_time(end_month)
       cur_time = start_time

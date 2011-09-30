@@ -20,18 +20,18 @@ module Cohortly
       end
     end
 
-    def self.cohort_chart_for_tag(tag = nil)
+    def self.cohort_chart_for_tag(tags = nil)
       query = {}
-      query = { :tags => tag } if tag
+      query = { :tags => { :$all => tags } } if tags
       self.collection.map_reduce(self.month_map,
                                  self.reduce,
-                                 { :out => self.report_table_name(tag),
+                                 { :out => self.report_table_name(tags),
                                    :raw => true,
                                    :query => query})  
     end
 
-    def self.report_table_name(tag = nil)
-      "cohort_report#{ tag ? "_#{ tag }" : '' }"
+    def self.report_table_name(tags = nil)
+      "cohort_report#{ tags ? "_#{ tags.sort.join('_') }" : '' }"
     end
 
     def self.month_map

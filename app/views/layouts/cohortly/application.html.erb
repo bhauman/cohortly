@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Cohortly</title>
+  <%= csrf_meta_tag %>
+  <style>
+
+    body {
+      font-family: "Lucida Sans Unicode","Lucida Grande",Sans-Serif;
+      font-size: 12px;
+      margin: 0;
+      color: #666699;
+    }
+    form {
+
+    }
+    .field, .tags {
+      margin-bottom: 1em;
+    }
+    .field label {
+     display:block;
+    }
+    .header {
+      background-color: #E8EDFF;
+      height: 50px;
+    }
+    .header h1 {
+      padding-top: 12px;
+      margin: 0;
+      color: #669;
+    } 
+    .container {
+      position: relative;
+      margin:0 auto;
+      width: 960px;
+    }
+    .hor-zebra {
+      border-collapse: collapse;
+      font-family: "Lucida Sans Unicode","Lucida Grande",Sans-Serif;
+      font-size: 12px;
+      text-align: left;
+      width: 960px;
+    }
+    .hor-zebra th {
+      color: #003399;
+      font-size: 14px;
+      font-weight: normal;
+      padding: 10px 8px;
+    }
+    .hor-zebra td {
+      color: #666699;
+      padding: 8px;
+    }
+    .hor-zebra .odd {
+      background: none repeat scroll 0 0 #E8EDFF;
+    }
+
+    .one-column-emphasis {
+      border-collapse: collapse;
+      font-family: "Lucida Sans Unicode","Lucida Grande",Sans-Serif;
+      font-size: 12px;
+      text-align: left;
+      position: relative;
+      left: -4px;
+      margin-top: 20px;
+    }
+    .one-column-emphasis th {
+      color: #003399;
+      font-size: 14px;
+      font-weight: normal;
+      padding: 12px 15px;
+    }
+    .one-column-emphasis td {
+      border-top: 1px solid #E8EDFF;
+      color: #666699;
+      padding: 10px 15px;
+    }
+    .oce-first {
+      background: none repeat scroll 0 0 #D0DAFD;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+    }
+    .one-column-emphasis tr:hover td {
+      background: none repeat scroll 0 0 #EFF2FF;
+      color: #333399;
+    }
+    .navigation {
+      position: absolute;
+      bottom: -3px;
+      right: 0;
+     }
+
+
+    .navigation ul {
+       list-style: none;
+       margin: 0;
+       padding: 0;
+    }
+    
+
+    .navigation ul li {
+      display: inline;
+      margin-right: .75em;
+      background-color: #FFF;
+      color: #669;
+      border-radius: 4px; 
+   }
+
+   .navigation ul li.last {
+      margin-right: 0;
+  }
+  .navigation li {
+     padding: 5px 1em;
+   }
+   .navigation li a {
+     color: #669;
+     text-decoration: none;
+   }
+  </style>
+
+</head>
+<body>
+  <div class="header">
+  <div class="container">
+    <h1>Cohortly</h1>
+    <div class="navigation">
+      <ul>
+        <li><span><%= link_to "Metrics", cohortly_metrics_path %></span></li>
+        <li><%= link_to "Cohort Reports", cohortly_reports_path %></span></li>
+      </ul>
+    </div>
+  </div>
+  </div>
+  <div class="content">
+    <div class="container">
+      <%= yield %>
+    </div>
+  </div>
+  <div class="footer">
+    <div class="container">
+    </div>
+  </div>
+</body>
+</html>
