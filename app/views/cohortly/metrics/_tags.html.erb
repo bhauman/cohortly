@@ -1,8 +1,9 @@
 <div class="tags">
   <% Cohortly::Metric.collection.distinct(:tags).each do |tag| %>
     <span class"tag">
-      <%= check_box_tag 'tags[]', tag, params[:tags] &&
-      params[:tags].include?(tag) %><label><%= tag %></label>
+      <%= check_box_tag 'cohortly_metric[tags][]', tag,
+      params[:cohortly_metric] && params[:cohortly_metric][:tags] &&
+      params[:cohortly_metric][:tags].include?(tag) %><label><%= tag %></label>
     </span>
   <% end %>
 </div>

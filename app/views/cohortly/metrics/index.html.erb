@@ -9,6 +9,11 @@
   <%= render :partial => 'cohortly/metrics/tags' %>
   <%= f.submit "filter" %>
 <% end %>
+
+<% url_gen = lambda {|page| cohortly_metrics_path({:cohortly_metric => params[:cohortly_metric], :page => page}) } %>
+<%= render :partial => 'pagination', 
+             :object => @metrics, 
+             :locals => { :url_gen => url_gen} %>
 <table class="hor-zebra">
   <tr>
     <th>User</th>
@@ -20,3 +25,7 @@
   </tr>
   <%= render :collection => @metrics, :partial => 'metric' %>
 </table>
+
+<%= render :partial => 'pagination', 
+           :object => @metrics, 
+           :locals => { :url_gen => url_gen} %>
