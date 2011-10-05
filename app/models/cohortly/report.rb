@@ -48,7 +48,7 @@ module Cohortly
 
     def month_cohorts_from(cohort_key)
       index = month_cohorts.index(cohort_key)
-      month_cohorts[(index + 1)..-1]
+      month_cohorts[index..-1]
     end
 
     def report_line(cohort_key)
