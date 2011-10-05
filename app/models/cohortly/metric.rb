@@ -5,6 +5,7 @@ module Cohortly
     key :user_start_date, Time
     key :user_id, Integer
     key :user_email, String
+    key :username, String    
     key :tags, Array
     key :controller, String
     key :action, String
