@@ -34,7 +34,7 @@ module Cohortly
     end
 
     def self.report_table_name(tags = nil)
-      "cohort_report#{ tags ? "_#{ tags.sort.join('_') }" : '' }"
+      "cohort_report#{ tags ? "_#{ tags.sort.join('_') }" : '' }_#{ Time.now.strftime("%m-%d-%Y") }"
     end
 
     def self.month_map
