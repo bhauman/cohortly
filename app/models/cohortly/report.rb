@@ -7,7 +7,7 @@ module Cohortly
     end
 
     def data
-      @data ||= (MongoMapper.database[self.collection].find().collect {|x| x}).sort_by {|x| x['_id'] }
+      @data ||= (Cohortly::Metric.database[self.collection].find().collect {|x| x}).sort_by {|x| x['_id'] }
     end
 
     def start_month
