@@ -66,7 +66,7 @@ module Cohortly
     def percent_line(cohort_key)
       line = report_line(cohort_key)
       base = user_count_in_cohort(cohort_key)
-      line.collect { |x| (x/base.to_f * 100).round }.unshift base
+      line.collect { |x| (x && base > 0.0 ) ? (x/base.to_f * 100).round : 0 }.unshift base
     end
     
     def report_totals

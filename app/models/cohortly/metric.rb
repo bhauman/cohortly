@@ -15,12 +15,14 @@ module Cohortly
     
     def self.store!(args)
       data = args[4]
-      if data[:controller] && !data[:controller]['cohortly']
+      data[:tags] = []
+      if data[:controller]
+        return if data[:controller]['cohortly']
         data[:tags] = Cohortly::TagConfig.tags_for(data[:controller], data[:action])
-        data[:user_email] = data[:email] if data[:email]
-        data[:tags] += data[:add_tags] if data[:add_tags]
-        create(data)
       end
+      data[:user_email] = data[:email] if data[:email]
+      data[:tags] += data[:add_tags] if data[:add_tags]
+      create(data)
     end
 
     def self.cohort_chart_for_tag(tags = nil)

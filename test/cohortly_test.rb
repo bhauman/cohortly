@@ -1,8 +1,5 @@
 require 'test_helper'
 
-
-
-
 class CohortlyTest < ActiveSupport::TestCase
 
   test "tag config" do
@@ -22,7 +19,6 @@ class CohortlyTest < ActiveSupport::TestCase
   end
 
   test "cohortly record event" do
-
 
     payload = { :user_start_date => Time.now - 1.month,
                 :user_id         => 5,
@@ -44,7 +40,27 @@ class CohortlyTest < ActiveSupport::TestCase
     assert_equal metric.user_start_date.utc.to_s, payload[:user_start_date].utc.to_s
 
   end
+  
+ test "cohortly record event without controller or action" do
 
+    payload = { :user_start_date => Time.now - 1.month,
+                :user_id         => 5,
+                :user_email => "jordon@example.com",
+                :add_tags => ['login', 'over13'] }
+
+    ActiveSupport::Notifications.instrument("cohortly.event", payload)
+
+    metric = Cohortly::Metric.first
+    assert metric,  "should create metric"
+    assert metric.created_at
+    assert metric.tags.include? 'login'
+    assert metric.tags.include? 'over13'
+    assert_equal metric.controller, nil    
+    assert_equal metric.user_email, 'jordon@example.com'
+    assert_equal metric.user_start_date.utc.to_s, payload[:user_start_date].utc.to_s
+
+  end
+  
   test "report map reduce" do
     setup_data_to_report_on
     Cohortly::Metric.cohort_chart_for_tag
@@ -53,8 +69,8 @@ class CohortlyTest < ActiveSupport::TestCase
     report = Cohortly::Report.new('cohort_report')
     assert_equal report.month_to_time('2011-08'), Time.utc(2011, 8)
     assert_equal report.time_to_month(Time.utc(2011,8)), '2011-08'
-    assert_equal report.start_month, (Time.now - 15.months).year.to_s + '-0' + (Time.now - 14.months).month.to_s
-    assert_equal report.month_cohorts.length, 15
+    assert_equal report.start_month, (Time.now - 15.months).year.to_s + '-0' + (Time.now - 15.months).month.to_s
+    assert_equal report.month_cohorts.length, 16
 
 #    assert_equal report.report_line(report.month_cohorts[2]), []
     assert_equal report.report_totals, [[14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
@@ -76,8 +92,8 @@ class CohortlyTest < ActiveSupport::TestCase
 
   test "counting uniq users in cohort" do
     setup_data_to_report_on
-    Cohortly::Metric.cohort_chart_for_tag
-    report = Cohortly::Report.new('cohort_report')
+    Cohortly::Metric.cohort_chart_for_tag()
+    report = Cohortly::Report.new(Cohortly::Metric.report_table_name())
     start_month = report.start_month
     start_month_time = report.month_to_time(report.start_month)
     next_month  = report.time_to_month(start_month_time + 1.month)
