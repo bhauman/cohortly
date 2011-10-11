@@ -60,20 +60,35 @@ class CohortlyTest < ActiveSupport::TestCase
     assert_equal metric.user_start_date.utc.to_s, payload[:user_start_date].utc.to_s
 
   end
+
+  test "one day of data" do
+    payload = { :user_start_date => Time.now,
+                :user_id         => 5,
+                :user_email => "jordon@example.com",
+                :controller => "session",
+                :action => "login"
+                }
+
+    ActiveSupport::Notifications.instrument("cohortly.event", payload)
+    Cohortly::Metric.cohort_chart_for_tag()
+    report = Cohortly::Report.new( Cohortly::Metric.report_table_name() )
+    assert_equal report.report_totals, [[1]]
+  end
   
   test "report map reduce" do
     setup_data_to_report_on
     Cohortly::Metric.cohort_chart_for_tag
-    assert_equal (Cohortly::Metric.all.collect &:user_id).uniq.length, 105
+    assert_equal (Cohortly::Metric.all.collect &:user_id).uniq.length, 136
 
-    report = Cohortly::Report.new('cohort_report')
+    report = Cohortly::Report.new(Cohortly::Metric.report_table_name())
     assert_equal report.month_to_time('2011-08'), Time.utc(2011, 8)
     assert_equal report.time_to_month(Time.utc(2011,8)), '2011-08'
     assert_equal report.start_month, (Time.now - 15.months).year.to_s + '-0' + (Time.now - 15.months).month.to_s
     assert_equal report.month_cohorts.length, 16
 
-#    assert_equal report.report_line(report.month_cohorts[2]), []
-    assert_equal report.report_totals, [[14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
+    assert_equal report.report_totals, [[16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
+                                        [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
+                                        [14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
                                         [13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
                                         [12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
                                         [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
@@ -86,8 +101,8 @@ class CohortlyTest < ActiveSupport::TestCase
                                         [4, 3, 2, 1],
                                         [3, 2, 1],
                                         [2, 1],
-                                        [1],
-                                        []]
+                                        [1]]
+
   end
 
   test "counting uniq users in cohort" do
@@ -98,38 +113,37 @@ class CohortlyTest < ActiveSupport::TestCase
     start_month_time = report.month_to_time(report.start_month)
     next_month  = report.time_to_month(start_month_time + 1.month)
     
-    assert_equal report.user_count_in_cohort(start_month), 14
-    assert_equal report.user_count_in_cohort(next_month), 13    
+    assert_equal report.user_count_in_cohort(start_month), 16
+    assert_equal report.user_count_in_cohort(next_month), 15    
   end
 
   test "getting a line of percentages" do
     setup_data_to_report_on
     Cohortly::Metric.cohort_chart_for_tag
-    report = Cohortly::Report.new('cohort_report')
+    report = Cohortly::Report.new(Cohortly::Metric.report_table_name())
     line = report.percent_line(report.start_month)
-    cohort_count = report.user_count_in_cohort(report.start_month)
-    assert_equal line, [cohort_count, 100, 93, 86, 79, 71, 64, 57, 50, 43, 36, 29, 21, 14, 7]
-    
+    assert_equal line, [16, 100, 94, 88, 81, 75, 69, 63, 56, 50, 44, 38, 31, 25, 19, 13, 6]
   end
 
   def setup_data_to_report_on
-    payload = { :user_start_date => Time.now - 1.month,
+    payload = { :user_start_date => Time.now,
                 :user_id         => 5,
                 :controller => "session",
                 :action => "login"
-                }
-    # 15 months of data
-    15.times do |start_offset|
-      start_offset.times do |m|
-        ((start_offset * 100)..((start_offset * 100) + m)).to_a.each do |user_id|
-          payload[:user_id] = user_id
-          payload[:user_start_date] = Time.now - start_offset.months
-          payload[:created_at] = Time.now - m.months
-
-          5.times { ActiveSupport::Notifications.instrument("cohortly.event", payload) }
-        end
+    }
+    
+    (0..15).to_a.each do |user_id|
+      start_date = Time.now - user_id.months
+      payload[:user_start_date] = start_date      
+      (0..15).to_a.each do |iter|
+        payload[:user_id] = (1000 * iter) + user_id
+        ((iter)..15).to_a.each do |x|
+          if Time.now - x.months > start_date
+            payload[:created_at] = Time.now - x.months
+            Cohortly::Metric.store! [nil, nil, nil, nil, payload] 
+          end
+        end        
       end
     end
-
   end
 end
