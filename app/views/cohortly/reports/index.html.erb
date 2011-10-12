@@ -4,29 +4,6 @@
 {:method => :get} do |f| %>
   <%= render :partial => 'cohortly/metrics/tags' %>
   <%= f.submit 'Get Report'%>
+  <div class="result_table">
+  </div>
 <% end %>
-
-
-<table class="one-column-emphasis">
-  <colgroup>
-    <col class="oce-first">
-  </colgroup>
-  <thead>
-    <tr>
-      <th>Month</th>
-      <th>N</th>
-      <% 12.times do |month| %>
-        <th>M<%= month + 1 %></th>
-      <% end %>
-    </tr>
-  </thead>
-  <% @report.month_cohorts.each do |cohort_key| %>
-    <tr class="<%= cycle('odd', 'even') %>">
-      <td><%= cohort_key %></td>
-      <% @report.percent_line(cohort_key)[0,13].each do |val| %>
-        <td style="text-align: right;"><%= val %></td>
-      <% end %>
-    </tr>
-  <% end %>
-</table>
-

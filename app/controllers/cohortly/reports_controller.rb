@@ -5,8 +5,13 @@ class Cohortly::ReportsController < Cohortly::CohortlyController
     report_name =  Cohortly::Metric.report_table_name(tags)
     unless Cohortly::Metric.database.collections.collect(&:name).include?( report_name )
       Cohortly::Metric.cohort_chart_for_tag(tags)
-    end  
+    end
     @report = Cohortly::Report.new( report_name )
+    respond_to do |format|
+      format.html
+      format.js { render :json => @report }
+    end
+
   end
 
 end

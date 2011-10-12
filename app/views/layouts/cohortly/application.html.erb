@@ -3,6 +3,83 @@
 <head>
   <title>Cohortly</title>
   <%= csrf_meta_tag %>
+
+  <%= javascript_include_tag 'https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js' %>
+  <%= javascript_include_tag 'http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.1.7/underscore-min.js' %>
+  <%= javascript_include_tag 'http://cdnjs.cloudflare.com/ajax/libs/backbone.js/0.5.3/backbone-min.js' %>
+
+  <script type="text/javascript">
+    var Cohortly = {};
+    Cohortly.Report = Backbone.Model.extend({
+      
+    });
+    Cohortly.ReportQuery  = Backbone.Model.extend({});
+    Cohortly.ReportView = Backbone.View.extend({
+      initialize: function() {
+        _.bindAll(this, 'submitQuery', 'render', 'render_rows', 'render_row', 'render_cells');
+        this.model = new Cohortly.Report();
+        this.model.bind('change', this.render)
+      },
+      events: {
+        'click input[type=submit]': 'submitQuery'
+      },
+      submitQuery: function(e) {
+        $.get( '/cohortly/reports.js?' + $(this.el).serialize(), _(function(data) {
+          this.model.set(data);
+        }).bind(this), 'json')
+        e.preventDefault();
+      },
+      render: function() {
+        $('.result_table', this.el).html(
+           ['<table class="one-column-emphasis">',
+            '<colgroup><col class="oce-first"></colgroup>',
+            this.render_header(),
+            this.render_rows(), 
+            '</table>'
+           ].join(''));
+      },
+      render_header: function() {
+        return [
+          '<thead><tr>',
+            '<th>Month</th>',
+            '<th>N</th>',
+            _.range(1,13).map(function(x){ return '<th>M' + x + '</th>'; }).join(''),
+          '</tr></thead>'
+        ].join('');
+      },
+      render_rows: function() {
+        return _(this.model.get('data')).map(this.render_row).join('');
+      },
+      render_row: function(row) {
+        var row_key = row['_id'];
+        var base_n = this.model.get('base_n')[row_key];
+        return [
+          '<tr>',
+            '<td>' + row['_id']+ '</td>',
+            '<td>' + base_n + '</td>',
+            this.render_cells(row, base_n),
+          '</tr>'
+        ].join('');
+      },
+      render_cells: function(row, base_n) {
+        return _(_(row.value).keys()).sortBy(function(x){return x}).slice(0,12).map(function(key) {
+          var num_users = _(row.value[key]).keys().length;
+          var percent = (base_n > 0) ? (num_users / base_n) : 0;
+          return [
+            '<td style="text-align:right;">',
+              Math.floor(percent * 100),   
+            '</td>'
+          ].join('');
+        }).join('');
+      }
+
+    });
+
+    $(function() {
+      Cohortly.report_view = new Cohortly.ReportView({ el: $('form') });
+    });
+  </script>
+
   <style>
 
     body {

@@ -10,6 +10,16 @@ module Cohortly
       @data ||= (Cohortly::Metric.database[self.collection].find().collect {|x| x}).sort_by {|x| x['_id'] }
     end
 
+    def fix_data_lines
+      data.each do |line|
+        month_cohorts_from(line['_id']).collect do |key|
+          if line["value"][key].nil?
+            line["value"][key] = { }
+          end
+        end        
+      end
+    end
+
     def start_month
       data.first['_id']
     end
@@ -73,6 +83,17 @@ module Cohortly
       month_cohorts.collect do |cohort_key|
         report_line(cohort_key)
       end
+    end
+    
+    def base_n
+      @base_n ||= self.month_cohorts.inject({ }) { |accum, key| accum[key] = user_count_in_cohort(key); accum  }
+    end
+    
+    def as_json(*args)
+      fix_data_lines
+      { :data => data,
+        :base_n => base_n 
+      }
     end
   end
 end
