@@ -1,9 +1,11 @@
 module Cohortly
   class Report
     # this is the reduced collection
-    attr_accessor :collection
+    attr_accessor :collection, :weekly, :key_pattern
     def initialize(collection)
       self.collection = collection
+      self.weekly = collection.match(/weekly/) ? true : false
+      self.key_pattern = self.weekly ? "%Y-%W" : "%Y-%m"
     end
 
     def data
@@ -12,59 +14,62 @@ module Cohortly
 
     def fix_data_lines
       data.each do |line|
-        month_cohorts_from(line['_id']).collect do |key|
+        period_cohorts_from(line['_id']).collect do |key|
           if line["value"][key].nil?
             line["value"][key] = { }
           end
         end        
       end
     end
-
-    def start_month
+    
+    def offset
+      self.weekly ? 1.week : 1.month
+    end
+    
+    def start_key
       data.first['_id']
     end
 
-    def end_month
-      time_to_month(Time.now)
+    def end_key
+      time_to_key(Time.now)
     end
 
-    def time_to_month(time)
-      time.strftime('%Y-%m')
+    def time_to_key(time)
+      time.strftime(self.key_pattern)
     end
 
-    def month_to_time(str_month)
-      year, month = str_month.split('-')
-      Time.utc(year.to_i, month.to_i)
+    def key_to_time(report_key)
+      DateTime.strptime(report_key, self.key_pattern).to_time.utc
     end
 
-    def user_count_in_cohort(str_month)
+    def user_count_in_cohort(report_key)
       Cohortly::Metric.collection.distinct(:user_id,
-                                           { :user_start_date => { :$gt => month_to_time(str_month),
-                                                                   :$lt => (month_to_time(str_month) + 1.month)}}).length
+                                           { :user_start_date => { :$gt => key_to_time(report_key),
+                                                                   :$lt => (key_to_time(report_key) + self.offset)}}).length
     end
 
-    def month_cohorts
+    def period_cohorts
       return [] unless data.first
-      start_time = month_to_time(start_month)
-      end_time = month_to_time(end_month)
+      start_time = key_to_time(start_key)
+      end_time = key_to_time(end_key)
       cur_time = start_time
       res = []
       while(cur_time <= end_time) do
-        res << time_to_month(cur_time)
-        cur_time += 1.month
+        res << time_to_key(cur_time)
+        cur_time += self.offset
       end
       res
     end
-
-    def month_cohorts_from(cohort_key)
-      index = month_cohorts.index(cohort_key)
-      month_cohorts[index..-1]
+    
+    def period_cohorts_from(cohort_key)
+      index = period_cohorts.index(cohort_key)
+      period_cohorts[index..-1]
     end
 
     def report_line(cohort_key)
       line = data.find {|x| x['_id'] == cohort_key}
       return [] unless line
-      month_cohorts_from(cohort_key).collect do |key|
+      period_cohorts_from(cohort_key).collect do |key|
         if line["value"][key]
           line["value"][key].keys.length
         else
@@ -80,13 +85,13 @@ module Cohortly
     end
     
     def report_totals
-      month_cohorts.collect do |cohort_key|
+      period_cohorts.collect do |cohort_key|
         report_line(cohort_key)
       end
     end
     
     def base_n
-      @base_n ||= self.month_cohorts.inject({ }) { |accum, key| accum[key] = user_count_in_cohort(key); accum  }
+      @base_n ||= self.period_cohorts.inject({ }) { |accum, key| accum[key] = user_count_in_cohort(key); accum  }
     end
     
     def as_json(*args)

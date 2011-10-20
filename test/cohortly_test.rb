@@ -74,6 +74,40 @@ class CohortlyTest < ActiveSupport::TestCase
     report = Cohortly::Report.new( Cohortly::Metric.report_table_name() )
     assert_equal report.report_totals, [[1]]
   end
+
+  test "weekly" do
+    setup_data_to_report_on
+    Cohortly::Metric.weekly_cohort_chart_for_tag
+
+    report = Cohortly::Report.new(Cohortly::Metric.report_table_name(nil, true))
+    assert report.weekly
+    
+    time = DateTime.strptime('2011-08', '%Y-%W')
+    assert_equal report.key_to_time('2011-08'), time
+    assert_equal report.key_to_time(report.time_to_key(time)), time     
+    
+#     assert_equal report.time_to_key(Time.utc(2011,8)), '2011-08'
+#     assert_equal report.start_key, (Time.now - 15.months).year.to_s + '-0' + (Time.now - 15.months).month.to_s
+#     assert_equal report.month_cohorts.length, 16
+
+#     assert_equal report.report_totals, [[16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
+#                                         [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
+#                                         [14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
+#                                         [13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
+#                                         [12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
+#                                         [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
+#                                         [10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
+#                                         [9, 8, 7, 6, 5, 4, 3, 2, 1],
+#                                         [8, 7, 6, 5, 4, 3, 2, 1],
+#                                         [7, 6, 5, 4, 3, 2, 1],
+#                                         [6, 5, 4, 3, 2, 1],
+#                                         [5, 4, 3, 2, 1],
+#                                         [4, 3, 2, 1],
+#                                         [3, 2, 1],
+#                                         [2, 1],
+#                                         [1]]
+
+  end
   
   test "report map reduce" do
     setup_data_to_report_on
@@ -81,10 +115,10 @@ class CohortlyTest < ActiveSupport::TestCase
     assert_equal (Cohortly::Metric.all.collect &:user_id).uniq.length, 136
 
     report = Cohortly::Report.new(Cohortly::Metric.report_table_name())
-    assert_equal report.month_to_time('2011-08'), Time.utc(2011, 8)
-    assert_equal report.time_to_month(Time.utc(2011,8)), '2011-08'
-    assert_equal report.start_month, (Time.now - 15.months).year.to_s + '-0' + (Time.now - 15.months).month.to_s
-    assert_equal report.month_cohorts.length, 16
+    assert_equal report.key_to_time('2011-08'), Time.utc(2011, 8)
+    assert_equal report.time_to_key(Time.utc(2011,8)), '2011-08'
+    assert_equal report.start_key, (Time.now - 15.months).year.to_s + '-0' + (Time.now - 15.months).month.to_s
+    assert_equal report.period_cohorts.length, 16
 
     assert_equal report.report_totals, [[16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
                                         [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
@@ -109,9 +143,9 @@ class CohortlyTest < ActiveSupport::TestCase
     setup_data_to_report_on
     Cohortly::Metric.cohort_chart_for_tag()
     report = Cohortly::Report.new(Cohortly::Metric.report_table_name())
-    start_month = report.start_month
-    start_month_time = report.month_to_time(report.start_month)
-    next_month  = report.time_to_month(start_month_time + 1.month)
+    start_month = report.start_key
+    start_month_time = report.key_to_time(report.start_key)
+    next_month  = report.time_to_key(start_month_time + 1.month)
     
     assert_equal report.user_count_in_cohort(start_month), 16
     assert_equal report.user_count_in_cohort(next_month), 15    
@@ -121,7 +155,7 @@ class CohortlyTest < ActiveSupport::TestCase
     setup_data_to_report_on
     Cohortly::Metric.cohort_chart_for_tag
     report = Cohortly::Report.new(Cohortly::Metric.report_table_name())
-    line = report.percent_line(report.start_month)
+    line = report.percent_line(report.start_key)
     assert_equal line, [16, 100, 94, 88, 81, 75, 69, 63, 56, 50, 44, 38, 31, 25, 19, 13, 6]
   end
 
