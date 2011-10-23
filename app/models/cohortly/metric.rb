@@ -31,12 +31,17 @@ module Cohortly
       if groups      
         query[:$where] = "function() { return #{ groups.collect {|x| 'this.tags.indexOf("' + x + '") >= 0'  }.join(' || ') }; }"
       end      
-      collection_name = self.report_table_name(tags, groups, weekly)      
+      collection_name = self.report_table_name(tags, groups, weekly)
+      # incremental map_reduce pattern
+      meta = Cohortly::ReportMeta.find_or_create_by_collection_name(collection_name)
+      query[:created_at] = { :$gt => meta.last_update_on.utc } if meta.last_update_on
       self.collection.map_reduce(weekly ? self.week_map : self.month_map,
                                  self.reduce,
-                                 { :out => collection_name,
+                                 { :out => meta.last_update_on ? { :reduce => collection_name } : collection_name,
                                    :raw => true,
                                    :query => query})        
+      meta.last_update_on = Time.now.utc
+      meta.save        
     end
     
     def self.cohort_chart_for_tag(tags = nil, groups = nil)
@@ -48,9 +53,33 @@ module Cohortly
     end
     
     def self.report_table_name(tags = nil, groups = nil, weekly = true)
-      "cohort_report#{ tags ? "-tags_#{ tags.sort.join('_') }" : '' }#{ groups ? "-groups_#{ groups.sort.join('_') }" : '' }#{ weekly ? '-weekly' : '-monthly'}"
+      "cohortly_report#{ tags ? "-tags=#{ tags.sort.join(':') }" : '' }#{ groups ? "-groups=#{ groups.sort.join(':') }" : '' }#{ weekly ? '-weekly' : '-monthly'}"
     end
-
+    
+    def self.report_name_to_args(name)
+      name = name.gsub(/^cohortly_report/, '')
+      if name =~ /-weekly$/
+        weekly = true
+        name = name.gsub(/-weekly$/, '')
+      else
+        weekly = false
+        name = name.gsub(/-monthly$/, '')        
+      end
+      tags = nil
+      groups = nil
+      if name.length > 0
+        name = name.gsub(/-tags/, 'tags')
+        tags, groups = name.split('-')        
+        tags = tags.gsub(/tags=/, '').split(':')
+        tags = tags.any? ? tags : nil        
+        if groups
+          groups = groups.gsub(/groups=/,'').split(':')              
+          groups = groups.any? ? groups : nil                      
+        end
+      end
+      [tags, groups, weekly] 
+    end
+    
     def self.month_map
       <<-JS
         function() {

@@ -2,6 +2,10 @@ require 'test_helper'
 
 class CohortlyTest < ActiveSupport::TestCase
   include Cohortly
+  def setup
+    Cohortly::ReportMeta.delete_all
+  end
+  
   test "tag config" do
     assert_equal Cohortly::TagConfig.tags_for(:hi_there, :index), ['hello']
     assert_equal Cohortly::TagConfig.tags_for(:see_ya, :index), []
@@ -182,7 +186,15 @@ class CohortlyTest < ActiveSupport::TestCase
       assert_equal (Time.now.utc + x.days).strftime('%Y-%W'), StoredProcedures.execute(:week_key, Time.now.utc + x.days)
     }
   end
-
+  
+  test "name to args" do
+    assert_equal Metric.report_name_to_args("cohortly_report-weekly"), [nil, nil, true]
+    assert_equal Metric.report_name_to_args("cohortly_report-groups=rand_0-weekly"), [nil, ['rand_0'], true]
+    assert_equal Metric.report_name_to_args("cohortly_report-tags=rand_5-groups=rand_0:rand_1-weekly"), [['rand_5'], ['rand_0', 'rand_1'], true]
+    assert_equal Metric.report_name_to_args("cohortly_report-tags=rand_1:rand_5-groups=rand_0:rand_1-weekly"), [['rand_1', 'rand_5'], ['rand_0', 'rand_1'], true]
+    assert_equal Metric.report_name_to_args("cohortly_report-tags=rand_1:rand_5-monthly"), [['rand_1', 'rand_5'], nil, false]        
+  end
+  
   def setup_data_to_report_on
     payload = { :user_start_date => Time.now,
                 :user_id         => 5,
