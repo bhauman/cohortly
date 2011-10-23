@@ -1,10 +1,12 @@
 module Cohortly
   class Report
     # this is the reduced collection
-    attr_accessor :collection, :weekly, :key_pattern
-    def initialize(collection)
-      self.collection = collection
-      self.weekly = collection.match(/weekly/) ? true : false
+    attr_accessor :collection, :weekly, :key_pattern, :groups, :tags
+    def initialize( tags = nil, groups = nil, weekly = true )
+      self.collection = Cohortly::Metric.report_table_name(tags, groups, weekly)
+      self.groups = groups
+      self.tags = tags
+      self.weekly = weekly
       self.key_pattern = self.weekly ? "%Y-%W" : "%Y-%m"
     end
 
@@ -43,9 +45,10 @@ module Cohortly
     end
 
     def user_count_in_cohort(report_key)
-      Cohortly::Metric.collection.distinct(:user_id,
-                                           { :user_start_date => { :$gt => key_to_time(report_key),
-                                                                   :$lt => (key_to_time(report_key) + self.offset)}}).length
+      params = { :user_start_date => { :$gt => key_to_time(report_key),
+                                       :$lt => (key_to_time(report_key) + self.offset)}}
+      params[:tags] = { :$in => groups } if self.groups
+      Cohortly::Metric.collection.distinct(:user_id, params).length
     end
 
     def period_cohorts

@@ -1,0 +1,9 @@
+<div class="groups">
+  <% Cohortly::TagConfig.all_groups.each do |group| %>
+    <span class"group">
+      <%= check_box_tag 'cohortly_metric[groups][]', group,
+      params[:cohortly_metric] && params[:cohortly_metric][:groups] &&
+      params[:cohortly_metric][:groups].include?(group) %><label><%= group %></label>
+    </span>
+  <% end %>
+</div>

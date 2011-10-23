@@ -11,6 +11,7 @@ module Cohortly
           Cohortly::Metric.database.authenticate(cfg.username, cfg.password) if(cfg.password)
         end        
       end
+      Cohortly::StoredProcedures.store_procedures
     end
   end
 end

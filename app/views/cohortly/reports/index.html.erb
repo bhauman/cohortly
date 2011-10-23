@@ -2,6 +2,9 @@
 
 <%= form_for @metric_search, :url => cohortly_reports_path, :html =>
 {:method => :get} do |f| %>
+  <h3>Groups</h3>
+  <%= render :partial => 'cohortly/metrics/groups' %>
+  <h3>Tags</h3>
   <%= render :partial => 'cohortly/metrics/tags' %>
   <%= f.submit 'Get Report'%>
   <div class="result_table">

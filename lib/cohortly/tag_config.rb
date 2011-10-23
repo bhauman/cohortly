@@ -2,9 +2,10 @@ require 'singleton'
 module Cohortly
   class TagConfig
     include Singleton
-    attr_accessor :_tags, :lookup_table
+    attr_accessor :_tags, :_groups, :lookup_table
     def self.draw_tags(&block)
       instance._tags = []
+      instance._groups = []      
       instance.lookup_table = {}
       instance.instance_eval(&block)
       instance.compile!
@@ -18,7 +19,11 @@ module Cohortly
     def tags(*args, &block)
       args.each {|x| tag(x, &block) }
     end
-
+    
+    def groups(*args)
+      self._groups = *args.collect(&:to_s)
+    end
+    
     def compile!
       self._tags.each do |tag|
         tag._controllers.each do |cont|
@@ -53,6 +58,10 @@ module Cohortly
         []
       end
     end
+
+    def self.all_groups
+      instance._groups.sort
+    end    
 
     class Tag
       attr_accessor :_name, :_controllers

@@ -1,4 +1,6 @@
 Cohortly::TagConfig.draw_tags do
+  groups :rand_0, :rand_1, :rand_3
+   
       tag :hey do
        controllers :stuff
       end
