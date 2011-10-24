@@ -27,7 +27,7 @@ module Cohortly
     
     def self.cohort_chart(tags = nil, groups = nil, weekly = false)
       query = { }
-      query = {:tags => { :$all => tags} } if tags
+      query = {:tags => { :$in => tags} } if tags
       if groups      
         query[:$where] = "function() { return #{ groups.collect {|x| 'this.tags.indexOf("' + x + '") >= 0'  }.join(' || ') }; }"
       end      

@@ -87,13 +87,13 @@ class CohortlyTest < ActiveSupport::TestCase
     report = Cohortly::Report.new()
     assert report.weekly
     
-    time = DateTime.strptime('2011-08', '%Y-%W')
+    time = DateTime.strptime('2011-08', '%Y-%W').utc
     assert_equal report.key_to_time('2011-08'), time
     assert_equal report.key_to_time(report.time_to_key(time)), time     
     
     assert_equal report.time_to_key(Time.utc(2011,8)), '2011-31'
     assert_equal report.time_to_key(Time.utc(2011,1)), '2011-00'
-    assert_equal report.start_key, report.time_to_key(Time.now - 15.weeks)
+    assert_equal report.start_key, report.time_to_key(Time.now.utc - 15.weeks)
     assert_equal report.period_cohorts.length, 16
 
     assert_equal report.report_totals, [[16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
@@ -204,13 +204,13 @@ class CohortlyTest < ActiveSupport::TestCase
     }
     
     (0..15).to_a.each do |user_id|
-      start_date = Time.now - user_id.months
+      start_date = Time.now.utc - user_id.months
       payload[:user_start_date] = start_date      
       (0..15).to_a.each do |iter|
         payload[:user_id] = (1000 * iter) + user_id
         ((iter)..15).to_a.each do |x|
-          if Time.now - x.months > start_date
-            payload[:created_at] = Time.now - x.months
+          if Time.now.utc - x.months > start_date
+            payload[:created_at] = Time.now.utc - x.months
             Cohortly::Metric.store! [nil, nil, nil, nil, payload] 
           end
         end        
@@ -219,7 +219,7 @@ class CohortlyTest < ActiveSupport::TestCase
   end
 
   def setup_weekly_data_to_report_on(tag = 'weekly' )
-    payload = { :user_start_date => Time.now,
+    payload = { :user_start_date => Time.now.utc,
                 :user_id         => 5,
                 :controller => "session",
       :action => "login",
@@ -227,13 +227,13 @@ class CohortlyTest < ActiveSupport::TestCase
     }
     
     (0..15).to_a.each do |user_id|
-      start_date = Time.now - user_id.weeks
+      start_date = Time.now.utc - user_id.weeks
       payload[:user_start_date] = start_date      
       (0..15).to_a.each do |iter|
         payload[:user_id] = (1000 * iter) + user_id
         ((iter)..15).to_a.each do |x|
-          if Time.now - x.weeks > start_date
-            payload[:created_at] = Time.now - x.weeks
+          if Time.now.utc - x.weeks > start_date
+            payload[:created_at] = Time.now.utc - x.weeks
             Cohortly::Metric.store! [nil, nil, nil, nil, payload] 
           end
         end        

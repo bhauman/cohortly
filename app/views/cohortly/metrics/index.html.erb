@@ -3,9 +3,16 @@
 <%= form_for(@metric_search, :url => cohortly_metrics_path, :html => {
 :method =>:get }) do |f| %>
   <div class="field">
-    <%= f.label :user_id %>
+    <%= f.label 'User id' %>
     <%= f.text_field :user_id %>
   </div>
+  <div class="field">
+    <%= f.label :username %>
+    <%= f.text_field :username %>
+  </div>
+  <h3>Groups</h3>
+  <%= render :partial => 'cohortly/metrics/groups' %>
+  <h3>Tags</h3>
   <%= render :partial => 'cohortly/metrics/tags' %>
   <%= f.submit "filter" %>
 <% end %>

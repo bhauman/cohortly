@@ -33,7 +33,7 @@ module Cohortly
     end
 
     def end_key
-      time_to_key(Time.now)
+      time_to_key(Time.now.utc)
     end
 
     def time_to_key(time)
