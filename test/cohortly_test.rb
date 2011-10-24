@@ -90,6 +90,7 @@ class CohortlyTest < ActiveSupport::TestCase
     time = DateTime.strptime('2011-08', '%Y-%W').utc
     assert_equal report.key_to_time('2011-08'), time
     assert_equal report.key_to_time(report.time_to_key(time)), time     
+
     
     assert_equal report.time_to_key(Time.utc(2011,8)), '2011-31'
     assert_equal report.time_to_key(Time.utc(2011,1)), '2011-00'
