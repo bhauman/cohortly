@@ -3,6 +3,7 @@ namespace :cohortly do
     desc "run the reports for all the tags"
     task :reports => :environment do
       report_names = Cohortly::Metric.database.collections.select { |c| c.name =~ /^cohortly_report/ }.collect &:name
+      Cohortly::Metric.cohort_chart
       report_names.each do |name|
         args = Cohortly::Metric.report_name_to_args(name)
         Cohortly::Metric.cohort_chart(*args)

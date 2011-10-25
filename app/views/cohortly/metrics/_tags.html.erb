@@ -1,7 +1,7 @@
 <div class="tags">
-  <% (Cohortly::Metric.collection.distinct(:tags) - Cohortly::TagConfig.all_groups).each_slice(8) do |tags| %>
+  <% (Cohortly::Metric.collection.distinct(:tags) - Cohortly::TagConfig.all_groups).sort.each_slice(8) do |tags| %>
     <div class="tag_group" style="float:left; padding: 10px;">
-      <% tags.each do |tag| %>
+      <% tags.sort.each do |tag| %>
         <div class"tag">
           <%= check_box_tag 'cohortly_metric[tags][]', tag,
           params[:cohortly_metric] && params[:cohortly_metric][:tags] &&

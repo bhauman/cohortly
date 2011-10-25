@@ -1,9 +1,14 @@
-<div class="groups">
-  <% Cohortly::TagConfig.all_groups.each do |group| %>
-    <span class"group">
-      <%= check_box_tag 'cohortly_metric[groups][]', group,
-      params[:cohortly_metric] && params[:cohortly_metric][:groups] &&
-      params[:cohortly_metric][:groups].include?(group) %><label><%= group %></label>
-    </span>
+<div class="tags">
+  <% Cohortly::TagConfig.all_groups.sort.each_slice(3) do |groups| %>
+    <div class="tag_group" style="float:left; padding: 10px;">
+      <% groups.sort.each do |group| %>
+        <div class"tag">
+          <%= check_box_tag 'cohortly_metric[groups][]', group,
+          params[:cohortly_metric] && params[:cohortly_metric][:groups] &&
+          params[:cohortly_metric][:groups].include?(group) %><label><%= group %></label>
+        </div>
+      <% end %>
+    </div>
   <% end %>
+  <div style="clear:both;"></div>
 </div>

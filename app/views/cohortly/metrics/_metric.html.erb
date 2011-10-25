@@ -4,5 +4,5 @@
   <td><%= metric.created_at.strftime("%m/%d/%Y %H:%M") %></td>
   <td><%= metric.controller %></td>
   <td><%= metric.action %></td>
-  <td><%= metric.tags.join(', ')  %></td>
+  <td><%= (metric.tags - Cohortly::TagConfig.all_groups).sort.join(', ')  %></td>
 </tr>
