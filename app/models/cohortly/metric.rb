@@ -12,6 +12,7 @@ module Cohortly
     timestamps!
     
     ensure_index :tags
+    ensure_index :user_start_date
     
     def self.store!(args)
       data = args[4]
