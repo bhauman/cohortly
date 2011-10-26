@@ -149,20 +149,21 @@ class CohortlyTest < ActiveSupport::TestCase
     setup_weekly_data_to_report_on
     Cohortly::Metric.weekly_cohort_chart_for_tag()
     report = Cohortly::Report.new()
-    start_week = report.start_key
-    start_week_time = report.key_to_time(report.start_key)
-    next_week  = report.time_to_key(start_week_time + 1.week)
+
+    start_week_time = report.key_to_time(report.start_key) + 1.week
+    start_week  = report.time_to_key(start_week_time + 1.week)    
+    next_week  = report.time_to_key(start_week_time + 2.weeks)
     
-    assert_equal report.user_count_in_cohort(start_week), 16
-    assert_equal report.user_count_in_cohort(next_week), 15    
+    assert_equal report.user_count_in_cohort(start_week), 15
+    assert_equal report.user_count_in_cohort(next_week), 14    
   end
 
   test "getting a line of percentages" do
     setup_weekly_data_to_report_on
     Cohortly::Metric.weekly_cohort_chart_for_tag
     report = Cohortly::Report.new
-    line = report.percent_line(report.start_key)
-    assert_equal line, [16, 100, 94, 88, 81, 75, 69, 63, 56, 50, 44, 38, 31, 25, 19, 13, 6]
+    line = report.percent_line(report.time_to_key(report.key_to_time(report.start_key) + 1.week ))
+    assert_equal line, [16, 94, 88, 81, 75, 69, 63, 56, 50, 44, 38, 31, 25, 19, 13, 6]
   end
   
   test "javascript day of year" do
