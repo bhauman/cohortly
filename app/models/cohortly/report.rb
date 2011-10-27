@@ -1,9 +1,10 @@
 module Cohortly
   class Report
     # this is the reduced collection
-    attr_accessor :collection, :weekly, :key_pattern, :groups, :tags
+    attr_accessor :collection, :weekly, :key_pattern, :groups, :tags, :report_meta
     def initialize( tags = nil, groups = nil, weekly = true )
       self.collection = Cohortly::Metric.report_table_name(tags, groups, weekly)
+      self.report_meta = ReportMeta.find_or_create_by_collection_name(self.collection)
       self.groups = groups
       self.tags = tags
       self.weekly = weekly
@@ -11,7 +12,7 @@ module Cohortly
     end
 
     def data
-      @data ||= (Cohortly::Metric.database[self.collection].find().collect {|x| x}).sort_by {|x| x['_id'] }
+      @data ||= (Cohortly::Metric.database[self.report_meta.store_name].find().collect {|x| x}).sort_by {|x| x['_id'] }
     end
 
     def fix_data_lines
@@ -99,7 +100,12 @@ module Cohortly
     
     def as_json(*args)
       fix_data_lines
-      { :data => data,
+      { :name => report_meta.collection_name,
+        :store_name => report_meta.store_name,
+        :groups => self.groups,
+        :tags   => self.tags,
+        :weekly => self.weekly,
+        :data => data,
         :base_n => base_n 
       }
     end

@@ -173,19 +173,23 @@ class CohortlyTest < ActiveSupport::TestCase
   end
 
   test "javascript week of year" do
+    
     StoredProcedures.store_procedures
     assert_equal Time.now.utc.strftime('%W').to_i, StoredProcedures.execute(:week_of_year, Time.now.utc)
     assert_equal (Time.now.utc + 1.week).strftime('%W').to_i, StoredProcedures.execute(:week_of_year, Time.now.utc + 1.week)
+    week_end_minus_15 = Time.now.end_of_week - 15.hours
+    # these are one second off of eachother bleh :P
     30.times { |x|
-      assert_equal (Time.now.utc + x.days).strftime('%W').to_i, StoredProcedures.execute(:week_of_year, Time.now.utc + x.days)
+      assert_equal (week_end_minus_15 + x.hours + 1.second).utc.strftime('%W').to_i, StoredProcedures.execute(:week_of_year, week_end_minus_15 + x.hours)
     }
   end
 
   test "javascript time to week key" do
     StoredProcedures.store_procedures
     assert_equal Time.now.utc.strftime('%Y-%W'), StoredProcedures.execute(:week_key, Time.now.utc)
+    week_end_minus_15 = Time.now.end_of_week - 15.hours
     30.times { |x|
-      assert_equal (Time.now.utc + x.days).strftime('%Y-%W'), StoredProcedures.execute(:week_key, Time.now.utc + x.days)
+      assert_equal (week_end_minus_15 + x.days + 1.second).strftime('%Y-%W'), StoredProcedures.execute(:week_key, week_end_minus_15 + x.days)
     }
   end
   

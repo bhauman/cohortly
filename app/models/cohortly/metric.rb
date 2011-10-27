@@ -38,7 +38,7 @@ module Cohortly
       query[:created_at] = { :$gt => meta.last_update_on.utc } if meta.last_update_on
       self.collection.map_reduce(weekly ? self.week_map : self.month_map,
                                  self.reduce,
-                                 { :out => meta.last_update_on ? { :reduce => collection_name } : collection_name,
+                                 { :out => meta.last_update_on ? { :reduce => meta.store_name } : meta.store_name,
                                    :raw => true,
                                    :query => query})        
       meta.last_update_on = Time.now.utc

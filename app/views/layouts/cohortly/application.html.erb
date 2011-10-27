@@ -5,8 +5,8 @@
   <%= csrf_meta_tag %>
 
   <%= javascript_include_tag 'https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js' %>
-  <%= javascript_include_tag 'http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.1.7/underscore-min.js' %>
-  <%= javascript_include_tag 'http://cdnjs.cloudflare.com/ajax/libs/backbone.js/0.5.3/backbone-min.js' %>
+  <%= javascript_include_tag 'vendor/underscore.js' %>
+  <%= javascript_include_tag 'vendor/backbone.js' %>
 
   <script type="text/javascript">
     var Cohortly = {};
@@ -24,14 +24,21 @@
         'click input[type=submit]': 'submitQuery'
       },
       submitQuery: function(e) {
+        $('.result_table', this.el).html('<h1>Loading .......</h1>');
         $.get( '/cohortly/reports.js?' + $(this.el).serialize(), _(function(data) {
           this.model.set(data);
+          this.render();
         }).bind(this), 'json')
         e.preventDefault();
       },
       render: function() {
         $('.result_table', this.el).html(
-           ['<table class="one-column-emphasis">',
+           ['<h3>',
+             this.model.get('groups') ? 'Groups: ' + this.model.get('groups').join(', ') + ' | ':  'Groups: __ | ',
+            '',
+             this.model.get('tags') ? 'Tags: ' + this.model.get('tags').join(', ') :  'Tags: __ ',
+            '</h3>',
+            '<table class="one-column-emphasis">',
             '<colgroup><col class="oce-first"></colgroup>',
             this.render_header(),
             this.render_rows(), 
@@ -43,7 +50,7 @@
           '<thead><tr>',
             '<th>Week</th>',
             '<th>N</th>',
-            _.range(1,13).map(function(x){ return '<th>W' + x + '</th>'; }).join(''),
+            _.range(1,15).map(function(x){ return '<th>W' + x + '</th>'; }).join(''),
           '</tr></thead>'
         ].join('');
       },
@@ -62,7 +69,7 @@
         ].join('');
       },
       render_cells: function(row, base_n) {
-        return _(_(row.value).keys()).sortBy(function(x){return x}).slice(0,12).map(function(key) {
+        return _(_(row.value).keys()).sortBy(function(x){return x}).slice(0,14).map(function(key) {
           var num_users = _(row.value[key]).keys().length;
           var percent = (base_n > 0) ? (num_users / base_n) : 0;
           return [
