@@ -35,14 +35,21 @@ module Cohortly
       collection_name = self.report_table_name(tags, groups, weekly)
       # incremental map_reduce pattern
       meta = Cohortly::ReportMeta.find_or_create_by_collection_name(collection_name)
-      query[:created_at] = { :$gt => meta.last_update_on.utc } if meta.last_update_on
+
+      if meta.last_update_on
+        query[:created_at] = { :$gt => meta.last_update_on.utc }
+        out_collection = { :reduce => meta.store_name }
+      else
+        out_collection = meta.store_name
+      end
+
+      meta.last_update_on = Time.now.utc 
+      meta.save                    
       self.collection.map_reduce(weekly ? self.week_map : self.month_map,
                                  self.reduce,
-                                 { :out => meta.last_update_on ? { :reduce => meta.store_name } : meta.store_name,
+                                 { :out => out_collection,
                                    :raw => true,
                                    :query => query})        
-      meta.last_update_on = Time.now.utc
-      meta.save        
     end
     
     def self.cohort_chart_for_tag(tags = nil, groups = nil)

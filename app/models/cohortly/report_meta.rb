@@ -7,6 +7,11 @@ module Cohortly
 
     def store_name
       "cohortly_report_#{self.id}"
-    end    
+    end
+
+    def run
+      args = Metric.report_name_to_args(self.collection_name)
+      Cohortly::Metric.cohort_chart(*args)
+    end
   end
 end
