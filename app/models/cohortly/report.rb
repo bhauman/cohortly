@@ -46,8 +46,8 @@ module Cohortly
     end
 
     def user_count_in_cohort(report_key)
-      params = { :user_start_date => { :$gt => key_to_time(report_key),
-                                       :$lt => (key_to_time(report_key) + 1.week)}}
+      params = { :user_start_date => { :$gt => key_to_time(report_key) - 1.week,
+                                       :$lt => (key_to_time(report_key) )}}
       params[:tags] = { :$in => groups } if self.groups
       Cohortly::Metric.collection.distinct(:user_id, params).length
     end
