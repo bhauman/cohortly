@@ -6,10 +6,14 @@ class Cohortly::ReportsController < Cohortly::CohortlyController
     groups = @metric_search.groups    
       
     @report_name =  Cohortly::Metric.report_table_name(tags, groups, true)        
-   # run this in background would be better
-
-    Cohortly::Metric.weekly_cohort_chart_for_tag(tags, groups)
-    @report = Cohortly::Report.new( tags, groups, true )  
+    # run this in background would be better
+    
+    if Cohortly::Metric.respond_to? :delay
+      Cohortly::Metric.delay.weekly_cohort_chart_for_tag(tags, groups)      
+    else
+      Cohortly::Metric.weekly_cohort_chart_for_tag(tags, groups)
+    end
+    @report = Cohortly::Report.new( tags, groups, true )
     
     respond_to do |format|
       format.html
