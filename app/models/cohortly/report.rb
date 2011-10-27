@@ -68,7 +68,11 @@ module Cohortly
     
     def period_cohorts_from(cohort_key)
       index = period_cohorts.index(cohort_key)
-      period_cohorts[index..-1]
+      if index 
+        period_cohorts[index..-1]  
+      else
+        []
+      end
     end
 
     def report_line(cohort_key)
