@@ -55,22 +55,22 @@
         ].join('');
       },
       render_rows: function() {
-        return _(this.model.get('data')).map(this.render_row).join('');
+        return _(_(this.model.get('data')).keys()).sortBy(function(x) {x}).map(this.render_row).join('');
       },
-      render_row: function(row) {
-        var row_key = row['_id'];
+      render_row: function(row_key) {
         var base_n = this.model.get('base_n')[row_key];
         return [
           '<tr>',
-            '<td>' + row['_id']+ '</td>',
+            '<td>' + row_key + '</td>',
             '<td>' + base_n + '</td>',
-            this.render_cells(row, base_n),
+            this.render_cells(row_key, base_n),
           '</tr>'
         ].join('');
       },
-      render_cells: function(row, base_n) {
-        return _(_(row.value).keys()).sortBy(function(x){return x}).slice(0,14).map(function(key) {
-          var num_users = _(row.value[key]).keys().length;
+      render_cells: function(row_key, base_n) {
+        var row = this.model.get('data')[row_key];
+        return _(_(row).keys()).sortBy(function(x){return x}).slice(0,14).map(function(key) {
+          var num_users = _(row[key]).keys().length;
           var percent = (base_n > 0) ? (num_users / base_n) : 0;
           return [
             '<td style="text-align:right;">',
@@ -79,7 +79,6 @@
           ].join('');
         }).join('');
       }
-
     });
 
     $(function() {

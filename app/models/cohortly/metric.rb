@@ -51,7 +51,7 @@ module Cohortly
                                    :raw => true,
                                    :query => query})        
     end
-    
+
     def self.cohort_chart_for_tag(tags = nil, groups = nil)
       self.cohort_chart(tags, groups, false)
     end

@@ -25,5 +25,25 @@ namespace :cohortly do
         rep.run
       end
     end
+
+    desc "build cohorts"
+    task :build_cohorts => :environment do
+      
+      Cohortly::Cohorts.group_names.each do |name|
+        cohort = TagCohort.find_or_create_by_name(name)
+        cohort.store!
+      end
+
+      #weekly cohort
+      cur_time = Cohortly::Cohorts.first_user_start_date.utc.beginning_of_week
+      while(cur_time < Time.now) do
+        time_key = cur_time.strftime("%Y-%W")
+        cohort = Cohortly::PeriodCohort.find_or_create_by_tag(time_key)
+        cohort.start_time = cur_time
+        cohort.weekly = true
+        cohort.store!
+        cur_time += 1.week
+      end
+    end
   end
 end

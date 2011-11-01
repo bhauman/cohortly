@@ -9,8 +9,10 @@ module Cohortly
           Cohortly::Metric.connection Mongo::Connection.new(cfg.host, cfg.port)
           Cohortly::Metric.set_database_name cfg.database
           Cohortly::Metric.database.authenticate(cfg.username, cfg.password) if(cfg.password)
-          Cohortly::ReportMeta.connection Cohortly::Metric.connection
-          Cohortly::ReportMeta.set_database_name cfg.database
+          Cohortly::TagReport.connection Cohortly::Metric.connection
+          Cohortly::TagReport.set_database_name cfg.database
+          #Cohortly::UserCohort.connection Cohortly::Metric.connection
+          #Cohortly::UserCohort.set_database_name cfg.database                    
         end        
       end
       Cohortly::StoredProcedures.store_procedures
