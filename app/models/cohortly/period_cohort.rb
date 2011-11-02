@@ -17,7 +17,7 @@ module Cohortly
 
     def store!
       self.user_ids = Cohortly::Cohorts.range(self.start_time..self.end_time)
-      self.name = self.start_time.strftime(key_pattern)
+      self.name = (self.start_time + 3.days).strftime(key_pattern)
       self.save        
     end
   end

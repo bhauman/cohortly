@@ -16,7 +16,7 @@ module Cohortly
     end
     
     def tag_query
-      self.tags.any? ? { :tags => self.tags } : { }  
+      self.tags.any? ? { :tags => self.tags.first } : { }  
     end
     
     def cell_query(cohort_range, cell_range)
@@ -26,7 +26,7 @@ module Cohortly
         :user_start_date => {
           :$gt => cohort_range.begin,
           :$lt => cohort_range.end } }.tap { |x|
-        self.tags ? x.merge( tag_query ) : x  
+        self.tags ? x.merge!( tag_query ) : x  
       }
     end
 
@@ -47,7 +47,7 @@ module Cohortly
       while cohort_time <= Time.now
         cell_time = [cohort_time, cell_starting_time].max
         while cell_time <= Time.now
-          store_cell cohort_time..(cohort_time + 1.week), cell_time..(cell_time + 1.week)
+          yield cohort_time..(cohort_time + 1.week), cell_time..(cell_time + 1.week)
           cell_time += 1.week
         end
         cohort_time += 1.week
@@ -55,8 +55,9 @@ module Cohortly
     end
 
     def recalc_table
+      self.data = { }
       self.last_update_on = Time.now
-      self.cell_iter(self.start_time)
+      self.cell_iter(self.start_time) { |cohort_range, cell_range| self.store_cell(cohort_range, cell_range)}
     end
 
     def update_table
@@ -75,22 +76,46 @@ module Cohortly
         self.data[cohort_key][cell_key][user_id.to_s] = 1
       end
     end
-
-    def merge(report_meta)
-      ReportMeta.new(:tags => self.tags + report_meta.tags,
-                     :data => self.deep_merge(self.data, report_meta.data))
-    end
-
-    def deep_merge(data1, data2)
-      (data1.keys + data2.keys).uniq.inject({}) do |accum, key|
-        if (data1[key] || data2[key]).is_a?(Hash)
-          accum[key] = deep_merge(data1[key] || { }, data2[key] || { })  
-        else
-          accum[key] = data1[key] || data2[key] 
-        end
-        accum
-      end
+    
+    def merge(tag_report)
+      TagReport::Product.new(:tag_report => self, :tags => self.tags, :data => self.data).merge(tag_report)
     end
     
+    class Product
+      attr_accessor :tag_report, :tags, :data
+      def initialize(options = { })
+        self.tags = options[:tags]
+        self.tag_report = options[:tag_report]
+        self.data = options[:data]        
+      end
+
+      def merge(tag_report)
+        TagReport::Product.new(:tag_report => self.tag_report,
+                               :tags => self.tags | tag_report.tags,
+                               :data => self.deep_merge(self.data, tag_report.data))
+      end
+
+      def deep_merge(data1, data2)
+        (data1.keys + data2.keys).uniq.inject({}) do |accum, key|
+          if (data1[key] || data2[key]).is_a?(Hash)
+            accum[key] = deep_merge(data1[key] || { }, data2[key] || { })  
+          else
+            accum[key] = data1[key] || data2[key] 
+          end
+          accum
+        end
+      end
+      
+      # user_ids need to be strings
+      def intersect(user_ids)
+        self.tag_report.cell_iter(self.tag_report.start_time) do |cohort_range, cell_range|
+          cohort_key = cohort_range.begin.strftime('%Y-%W')
+          cell_key = cell_range.begin.strftime('%Y-%W')
+          cell = self.data[cohort_key][cell_key]
+          intersected_ids = cell.keys & user_ids
+          self.data[cohort_key][cell_key] = intersected_ids.inject({ }) { |accum, user_id| accum.merge!(user_id => 1); accum }
+        end
+      end
+    end
   end
 end
