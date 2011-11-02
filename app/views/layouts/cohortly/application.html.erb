@@ -34,9 +34,11 @@
       render: function() {
         $('.result_table', this.el).html(
            ['<h3>',
-             this.model.get('groups') ? 'Groups: ' + this.model.get('groups').join(', ') + ' | ':  'Groups: __ | ',
+            this.model.get('groups') ? 'Groups: ' + this.model.get('groups').join(', ') + ' | ':  'Groups: __ | ',
             '',
-             this.model.get('tags') ? 'Tags: ' + this.model.get('tags').join(', ') :  'Tags: __ ',
+            this.model.get('groups_intersect') ? 'Groups Int: ' + this.model.get('groups_intersect').join(', ') + ' | ':  'Groups Int: __ |',
+            '',
+            this.model.get('tags') ? 'Tags: ' + this.model.get('tags').join(', ') :  'Tags: __ ',
             '</h3>',
             '<table class="one-column-emphasis">',
             '<colgroup><col class="oce-first"></colgroup>',

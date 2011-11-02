@@ -39,6 +39,7 @@ class Cohortly::ReportsController < Cohortly::CohortlyController
     
       json_res = {
         :groups => groups,
+        :groups_intersect => groups_intersect,        
         :tags => tags,
         :weekly => true,
         :data => @tag_report.data_without_empty_rows,
