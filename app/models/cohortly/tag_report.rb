@@ -63,7 +63,7 @@ module Cohortly
     def update_table
       starting_time = self.last_update_on.utc.beginning_of_week
       self.last_update_on = Time.now      
-      self.cell_iter(starting_time)
+      self.cell_iter(starting_time) { |cohort_range, cell_range| self.store_cell(cohort_range, cell_range)} 
     end
 
     def store_cell(cohort_range, cell_range)
