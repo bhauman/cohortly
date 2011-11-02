@@ -32,7 +32,9 @@ class Cohortly::ReportsController < Cohortly::CohortlyController
       end
       
       @base_n = Cohortly::PeriodCohort.all.inject({ }) do |base_n, per_coh|
-        base_n.merge( per_coh.name => user_base_func.call(per_coh.user_ids) )
+        base_n.merge( per_coh.name => {
+                        :count => user_base_func.call(per_coh.user_ids),
+                        :pretty_date => DateTime.strptime( per_coh.name, '%Y-%W').beginning_of_week.strftime('%m-%d-%Y') } )
       end        
     
       json_res = {

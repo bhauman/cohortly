@@ -59,12 +59,12 @@
     { return x }).map(this.render_row).join('');
       },
       render_row: function(row_key) {
-        var base_n = this.model.get('base_n')[row_key];
+        var base_n_data = this.model.get('base_n')[row_key];
         return [
           '<tr>',
-            '<td>' + row_key + '</td>',
-            '<td>' + base_n + '</td>',
-            this.render_cells(row_key, base_n),
+            '<td>' + base_n_data.pretty_date + '</td>',
+            '<td>' + base_n_data.count + '</td>',
+            this.render_cells(row_key, base_n_data.count),
           '</tr>'
         ].join('');
       },
