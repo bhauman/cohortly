@@ -2,8 +2,10 @@
 
 <%= form_for @metric_search, :url => cohortly_reports_path, :html =>
 {:method => :get, :class => 'cohortly_report_form'} do |f| %>
-  <h3>Groups</h3>
+  <h3>Groups Union</h3>
   <%= render :partial => 'cohortly/metrics/groups' %>
+  <h3>Groups Intersect</h3>
+  <%= render :partial => 'cohortly/metrics/groups_intersect' %>
   <h3>Tags</h3>
   <%= render :partial => 'cohortly/metrics/tags' %>
   <%= f.submit 'Get Report'%>

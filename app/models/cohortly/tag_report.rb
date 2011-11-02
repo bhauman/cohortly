@@ -116,6 +116,11 @@ module Cohortly
           self.data[cohort_key][cell_key] = intersected_ids.inject({ }) { |accum, user_id| accum.merge!(user_id => 1); accum }
         end
       end
+      
+      def data_without_empty_rows
+        self.data.keys.sort.inject({ }) { |new_data, key| puts ; self.data[key].values.collect(&:length).sum > 0 ? new_data.merge(key => self.data[key]) : new_data }
+      end
+      
     end
   end
 end
