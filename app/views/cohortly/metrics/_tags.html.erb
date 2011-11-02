@@ -1,5 +1,5 @@
 <div class="tags">
-  <% (Cohortly::Metric.collection.distinct(:tags) - Cohortly::TagConfig.all_groups).sort.each_slice(8) do |tags| %>
+  <% Cohortly::TagReport.collection.distinct(:tags).sort.each_slice(8) do |tags| %>
     <div class="tag_group" style="float:left; padding: 10px;">
       <% tags.sort.each do |tag| %>
         <div class"tag">

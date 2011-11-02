@@ -1,15 +1,23 @@
 module Cohortly
-  class UserCohort
-    include MongoMapper::Document
-    
-    key :user_ids, Array
-    key :tag,      String
-    key :_type,    String    
-    timestamps!
-    
+  class PeriodCohort < Cohortly::UserCohort
+    key :start_time, Time
+    key :weekly, Boolean
+
+    def end_time
+      self.start_time + period
+    end
+
+    def period
+      self.weekly ? 1.week : 1.month
+    end
+
+    def key_pattern
+      self.weekly ? "%Y-%W" : "%Y-%m"
+    end
+
     def store!
-      return unless self.tag
-      self.user_ids = Cohortly::Cohorts.group(self.tag)
+      self.user_ids = Cohortly::Cohorts.range(self.start_time..self.end_time)
+      self.name = self.start_time.strftime(key_pattern)
       self.save        
     end
   end

@@ -7,13 +7,12 @@ module Cohortly
     key :data, Hash
     key :tags, Array
 
-    def store_name
-      "cohortly_report_#{self.id}"
-    end
-
     def run
-      args = Metric.report_name_to_args(self.collection_name)
-      Cohortly::Metric.cohort_chart(*args)
+      if self.last_update_on.nil?
+        self.recalc_table 
+      else
+        self.update_table
+      end
     end
     
     def tag_query

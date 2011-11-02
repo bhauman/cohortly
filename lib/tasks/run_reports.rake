@@ -1,36 +1,43 @@
 namespace :cohortly do
   namespace :run do
     desc "run the reports for all the tags"
-    task :reseed_reports => :environment do
-      Cohortly::ReportMeta.delete_all
-      Cohortly::Metric.cohort_chart(nil, nil, true)
-      puts "main report"
-      real_tags = (Cohortly::Metric.collection.distinct(:tags) - Cohortly::TagConfig.all_groups)
+    task :recalc_reports => :environment do
+      real_tags = Cohortly::Metric.collection.distinct(:tags)
       real_tags.each do |tag|
-        Cohortly::Metric.cohort_chart([tag], nil, true)
-        puts "tag: #{tag}"
+        report = Cohortly::TagReport.where(:tags => [tag]).first
+        report ||= Cohortly::TagReport.new(:tags => [tag])
+        report.recalc_table
+        report.save
       end
-      Cohortly::TagConfig.all_groups.each do |group|
-        real_tags.each do |tag|
-          puts "tag: #{tag} group: #{group}"          
-          Cohortly::Metric.cohort_chart([tag], [group], true)
-        end        
-      end
+
+      # the empty report
+      report = Cohortly::TagReport.where(:tags => []).first
+      report ||= Cohortly::TagReport.new(:tags => [])
+      report.recalc_table
+      report.save
     end
 
     desc "update all existing reports"
     task :updates => :environment do
-      Cohortly::ReportMeta.all.each do |rep|
-        puts rep.collection_name
-        rep.run
+      real_tags = Cohortly::Metric.collection.distinct(:tags)
+      real_tags.each do |tag|
+        report = Cohortly::TagReport.where(:tags => [tag]).first
+        report ||= Cohortly::TagReport.new(:tags => [tag])
+        report.run
+        report.save
       end
+      
+      # the empty report
+      report = Cohortly::TagReport.where(:tags => []).first
+      report ||= Cohortly::TagReport.new(:tags => [])
+      report.run
+      report.save      
     end
 
     desc "build cohorts"
     task :build_cohorts => :environment do
-      
       Cohortly::Cohorts.group_names.each do |name|
-        cohort = TagCohort.find_or_create_by_name(name)
+        cohort = Cohortly::GroupCohort.find_or_create_by_name(name)
         cohort.store!
       end
 
@@ -38,7 +45,7 @@ namespace :cohortly do
       cur_time = Cohortly::Cohorts.first_user_start_date.utc.beginning_of_week
       while(cur_time < Time.now) do
         time_key = cur_time.strftime("%Y-%W")
-        cohort = Cohortly::PeriodCohort.find_or_create_by_tag(time_key)
+        cohort = Cohortly::PeriodCohort.find_or_create_by_name(time_key)
         cohort.start_time = cur_time
         cohort.weekly = true
         cohort.store!

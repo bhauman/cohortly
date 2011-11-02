@@ -55,7 +55,8 @@
         ].join('');
       },
       render_rows: function() {
-        return _(_(this.model.get('data')).keys()).sortBy(function(x) {x}).map(this.render_row).join('');
+        return _(_(this.model.get('data')).keys()).sortBy(function(x)
+    { return x }).map(this.render_row).join('');
       },
       render_row: function(row_key) {
         var base_n = this.model.get('base_n')[row_key];

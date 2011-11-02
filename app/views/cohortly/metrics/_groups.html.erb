@@ -1,5 +1,5 @@
 <div class="tags">
-  <% Cohortly::TagConfig.all_groups.sort.each_slice(3) do |groups| %>
+  <% Cohortly::Cohorts.group_names.sort.each_slice(3) do |groups| %>
     <div class="tag_group" style="float:left; padding: 10px;">
       <% groups.sort.each do |group| %>
         <div class"tag">
